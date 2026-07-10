@@ -3,12 +3,7 @@ from docx import Document
 import pandas as pd
 import os
 
-from pypdf import PdfReader
-from docx import Document
-import pandas as pd
-import os
-
-# Leer PDF
+# --- PDF ---
 def leer_pdf(ruta):
     reader = PdfReader(ruta)
     texto = ""
@@ -16,7 +11,7 @@ def leer_pdf(ruta):
         texto += pagina.extract_text()
     return texto
 
-# Word
+# --- Word ---
 def leer_word(ruta):
     doc = Document(ruta)
     texto = ""
@@ -24,15 +19,14 @@ def leer_word(ruta):
         texto += parrafo.text + "\n"
     return texto
 
-# Excel 
+# --- Excel ---
 def leer_excel(ruta):
     df = pd.read_excel(ruta)
     return df
 
-
 def leer_todos_los_documentos(carpeta_raiz):
-    documentos_texto = []   # PDF y Word (RAG)
-    documentos_tabla = []   # Excel (consulta directa de precios)
+    documentos_texto = []
+    documentos_tabla = []
 
     for carpeta_actual, subcarpetas, archivos in os.walk(carpeta_raiz):
         for nombre_archivo in archivos:
@@ -53,13 +47,13 @@ def leer_todos_los_documentos(carpeta_raiz):
     return documentos_texto, documentos_tabla
 
 
+if __name__ == "__main__":
+    textos, tablas = leer_todos_los_documentos("Politicas-Negocio")
 
-textos, tablas = leer_todos_los_documentos("Politicas-Negocio")
+    print(f"Documentos de TEXTO (PDF/Word): {len(textos)}")
+    for doc in textos:
+        print(f"  - {doc['archivo']} ({doc['tipo']})")
 
-print(f"Documentos de TEXTO (PDF/Word): {len(textos)}")
-for doc in textos:
-    print(f"  - {doc['archivo']} ({doc['tipo']})")
-
-print(f"\nDocumentos de TABLA (Excel): {len(tablas)}")
-for doc in tablas:
-    print(f"  - {doc['archivo']} ({doc['tipo']})")
+    print(f"\nDocumentos de TABLA (Excel): {len(tablas)}")
+    for doc in tablas:
+        print(f"  - {doc['archivo']} ({doc['tipo']})")
