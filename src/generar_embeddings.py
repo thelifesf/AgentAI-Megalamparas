@@ -13,7 +13,7 @@ co = cohere.ClientV2(api_key)
 
 # --- Generar embeddings para una lista de chunks ---
 def generar_embeddings(chunks):
-    textos = [chunk["texto"] for chunk in chunks]  # sacamos solo el texto de cada chunk
+    textos = [chunk["texto_con_contexto"] for chunk in chunks]  # sacamos solo el texto de cada chunk
 
     respuesta = co.embed(
         texts=textos,
