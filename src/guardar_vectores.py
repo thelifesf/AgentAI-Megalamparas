@@ -5,7 +5,10 @@ from generar_embeddings import generar_embeddings
 
 cliente = chromadb.PersistentClient(path="chroma_db")
 
-coleccion = cliente.get_or_create_collection(name="megalamparas_documentos")
+coleccion = cliente.get_or_create_collection(
+    name="megalamparas_documentos",
+    metadata={"hnsw:space": "cosine"}
+)
 
 def guardar_en_chroma(chunks):
     ids = []

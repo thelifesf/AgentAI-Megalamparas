@@ -11,7 +11,10 @@ co = cohere.ClientV2(api_key)
 
 # --- Conectar a la base de datos vectorial ya guardada ---
 cliente = chromadb.PersistentClient(path="chroma_db")
-coleccion = cliente.get_or_create_collection(name="megalamparas_documentos")
+coleccion = cliente.get_or_create_collection(
+    name="megalamparas_documentos",
+    metadata={"hnsw:space": "cosine"}
+)
 
 
 # --- Convertir la pregunta del usuario en embedding ---
