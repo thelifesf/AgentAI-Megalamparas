@@ -57,7 +57,7 @@ Respuesta:"""
 
 # --- Prueba ---
 if __name__ == "__main__":
-    pregunta = "¿Cuál es la misión de la empresa?"
+    pregunta = "¿Cómo es el proceso de contratación de personal?"
     respuesta = responder_pregunta(pregunta)
 
     print(f"Pregunta: {pregunta}\n")
