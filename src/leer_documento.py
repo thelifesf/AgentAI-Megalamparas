@@ -53,54 +53,74 @@ def leer_excel(ruta):
 def leer_todos_los_documentos(carpeta_raiz):
     documentos_texto = []
     documentos_tabla = []
-    avisos_ocr = []  # aquí juntamos todas las páginas sospechosas de estar escaneadas
+    avisos_ocr = []
+    archivos_con_error = []  # nueva lista para juntar problemas de lectura
 
     for carpeta_actual, subcarpetas, archivos in os.walk(carpeta_raiz):
         for nombre_archivo in archivos:
+            # Ignorar archivos temporales de Word/Excel (empiezan con ~$)
+            if nombre_archivo.startswith("~$"):
+                continue
+
             ruta_completa = os.path.join(carpeta_actual, nombre_archivo)
             categoria = os.path.basename(carpeta_actual)
-            timestamp = os.path.getmtime(ruta_completa)
-            fecha_modificacion = datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d")
 
-            if nombre_archivo.endswith(".pdf"):
-                paginas = leer_pdf(ruta_completa, avisos_ocr)
-                documentos_texto.append({
-                    "archivo": ruta_completa,
-                    "tipo": "pdf",
-                    "categoria": categoria,
-                    "fecha": fecha_modificacion,
-                    "unidades": paginas
-                })
+            try:
+                timestamp = os.path.getmtime(ruta_completa)
+                fecha_modificacion = datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d")
 
-            elif nombre_archivo.endswith(".docx"):
-                secciones = leer_word(ruta_completa)
-                documentos_texto.append({
-                    "archivo": ruta_completa,
-                    "tipo": "word",
-                    "categoria": categoria,
-                    "fecha": fecha_modificacion,
-                    "unidades": secciones
-                })
+                if nombre_archivo.endswith(".pdf"):
+                    paginas = leer_pdf(ruta_completa, avisos_ocr)
+                    documentos_texto.append({
+                        "archivo": ruta_completa,
+                        "tipo": "pdf",
+                        "categoria": categoria,
+                        "fecha": fecha_modificacion,
+                        "unidades": paginas
+                    })
 
-            elif nombre_archivo.endswith(".xlsx"):
-                contenido = leer_excel(ruta_completa)
-                documentos_tabla.append({
-                    "archivo": ruta_completa,
-                    "tipo": "excel",
-                    "categoria": categoria,
-                    "fecha": fecha_modificacion,
-                    "contenido": contenido
-                })
+                elif nombre_archivo.endswith(".docx"):
+                    secciones = leer_word(ruta_completa)
+                    documentos_texto.append({
+                        "archivo": ruta_completa,
+                        "tipo": "word",
+                        "categoria": categoria,
+                        "fecha": fecha_modificacion,
+                        "unidades": secciones
+                    })
 
-    # --- Resumen final de avisos OCR, si los hubo ---
+                elif nombre_archivo.endswith(".xlsx"):
+                    contenido = leer_excel(ruta_completa)
+                    documentos_tabla.append({
+                        "archivo": ruta_completa,
+                        "tipo": "excel",
+                        "categoria": categoria,
+                        "fecha": fecha_modificacion,
+                        "contenido": contenido
+                    })
+
+            except PermissionError:
+                archivos_con_error.append((ruta_completa, "archivo abierto/bloqueado en otro programa"))
+            except Exception as e:
+                archivos_con_error.append((ruta_completa, str(e)))
+
+    # --- Resumen de avisos OCR ---
     if avisos_ocr:
         print("\n" + "="*60)
         print("⚠️  ATENCIÓN: posibles páginas escaneadas detectadas")
-        print("Estas páginas tienen muy poco texto extraíble.")
-        print("Este proyecto NO incluye OCR todavía (ver README).")
         print("="*60)
         for aviso in avisos_ocr:
             print(f"  - {aviso}")
+        print()
+
+    # --- Resumen de archivos que fallaron ---
+    if archivos_con_error:
+        print("\n" + "="*60)
+        print("⚠️  ATENCIÓN: algunos archivos no se pudieron leer")
+        print("="*60)
+        for archivo, razon in archivos_con_error:
+            print(f"  - {archivo} → {razon}")
+        print("Revisa que no estén abiertos en otro programa y vuelve a intentar.")
         print()
 
     return documentos_texto, documentos_tabla
