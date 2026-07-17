@@ -1,6 +1,15 @@
 import chromadb
 import numpy as np
 from buscar import embeber_pregunta
+from leer_documento import leer_pdf
+
+avisos = []
+paginas = leer_pdf("Politicas-Negocio/Estrategico/Megalamparas_Mision_Vision.pdf", avisos)
+
+for pagina in paginas:
+    print(f"--- Página {pagina['pagina']} ---")
+    print(repr(pagina["texto"]))  # repr() nos muestra saltos de línea y espacios exactos
+    print()
 
 cliente = chromadb.PersistentClient(path="chroma_db")
 coleccion = cliente.get_or_create_collection(
@@ -30,6 +39,7 @@ resultados_busqueda = coleccion.query(
     query_embeddings=[embedding_pregunta.tolist()],
     n_results=69  # traer TODOS para ver en qué puesto queda chunk_0
 )
+
 ids_ordenados = resultados_busqueda["ids"][0]
 posicion = ids_ordenados.index("chunk_0") + 1
 print(f"\nchunk_0 quedó en la posición #{posicion} de 69 resultados")
