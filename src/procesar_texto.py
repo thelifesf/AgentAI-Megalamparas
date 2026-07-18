@@ -127,15 +127,3 @@ def crear_chunks(documentos_texto):
  
     return chunks
  
- 
-# --- Prueba ---
-if __name__ == "__main__":
-    textos, tablas = leer_todos_los_documentos("Politicas-Negocio")
-    chunks = crear_chunks(textos)
- 
-    print(f"Se generaron {len(chunks)} chunks en total.\n")
- 
-    for i, chunk in enumerate(chunks[:3]):
-        print(f"--- Chunk {i+1} (de {chunk['archivo']}, {chunk['ubicacion']}) ---")
-        print(chunk["texto"])
-        print()

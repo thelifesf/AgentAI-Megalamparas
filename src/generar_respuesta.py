@@ -54,11 +54,3 @@ Respuesta:"""
 
     return respuesta.message.content[0].text
 
-
-# --- Prueba ---
-if __name__ == "__main__":
-    pregunta = "¿Cómo es el proceso de contratación de personal?"
-    respuesta = responder_pregunta(pregunta)
-
-    print(f"Pregunta: {pregunta}\n")
-    print(f"Respuesta:\n{respuesta}")

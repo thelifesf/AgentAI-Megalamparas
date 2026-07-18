@@ -30,18 +30,3 @@ def generar_embeddings(chunks):
 
     return chunks
 
-
-# --- Prueba ---
-if __name__ == "__main__":
-    textos, tablas = leer_todos_los_documentos("Politicas-Negocio")
-    chunks = crear_chunks(textos)
-
-    chunks_con_embeddings = generar_embeddings(chunks)
-
-    print(f"Se generaron embeddings para {len(chunks_con_embeddings)} chunks.\n")
-    print("Ejemplo del primer chunk:")
-    print("Archivo:", chunks_con_embeddings[0]["archivo"])
-    print("Ubicación:", chunks_con_embeddings[0]["ubicacion"])
-    print("Categoría:", chunks_con_embeddings[0]["categoria"])
-    print("Texto:", chunks_con_embeddings[0]["texto"][:100], "...")
-    print("Tamaño del embedding:", len(chunks_con_embeddings[0]["embedding"]))

@@ -64,13 +64,3 @@ Respuesta:"""
 
     return respuesta.message.content[0].text
 
-
-# --- Prueba ---
-if __name__ == "__main__":
-    df = cargar_precios()
-
-    pregunta = "dame las 20 lamparas mas baratas que hay en stock"
-    respuesta = responder_pregunta_excel(pregunta, df)
-
-    print(f"Pregunta: {pregunta}\n")
-    print(f"Respuesta:\n{respuesta}")

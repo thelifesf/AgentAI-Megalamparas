@@ -34,13 +34,3 @@ def guardar_en_chroma(chunks):
         embeddings=embeddings,
         metadatas=metadatos
     )
-
-if __name__ == "__main__":
-    textos, tablas = leer_todos_los_documentos("Politicas-Negocio")
-    chunks = crear_chunks(textos)
-    chunks_con_embeddings = generar_embeddings(chunks)
-
-    guardar_en_chroma(chunks_con_embeddings)
-
-    print(f"Se guardaron {len(chunks_con_embeddings)} chunks en ChromaDB.")
-    print(f"Total de elementos en la colección ahora: {coleccion.count()}")

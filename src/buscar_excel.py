@@ -149,24 +149,3 @@ def buscar_producto(pregunta, df):
 
     return resultados_mostrados, total_encontrados
 
-
-# --- Prueba ---
-if __name__ == "__main__":
-    df = cargar_precios()
-    print(f"Excel cargado: {len(df)} productos\n")
-
-    casos_prueba = [
-        "dame las 20 lamparas mas baratas que hay en stock",
-        "cual es el producto mas barato que hay en stock",
-        "cual es el aplique mas caro que venden",
-        "tienen algo economico para regalar menos de 15 dolares",
-        "productos entre 20 y 30 dolares",
-    ]
-
-    for pregunta in casos_prueba:
-        resultado, total = buscar_producto(pregunta, df)
-        print(f"Pregunta: {pregunta}")
-        print(f"Total encontrados: {total} (mostrando {len(resultado)})")
-        print(resultado[["codigo", "descripcion", "precio"]].to_string(index=False))
-        print("="*70)
-        print()

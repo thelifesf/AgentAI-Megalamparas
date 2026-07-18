@@ -60,19 +60,3 @@ def rerankear_resultados(pregunta, resultados):
         })
 
     return resultados_finales
-
-if __name__ == "__main__":
-    pregunta = "¿Cuál es la misión de la empresa?"
-
-    # Traemos un grupo más amplio primero (top 10), luego rerankeamos a los 3 mejores
-    resultados = buscar_chunks_relevantes(pregunta, n_resultados=10)
-    resultados_finales = rerankear_resultados(pregunta, resultados)
-
-    print(f"Pregunta: {pregunta}\n")
-    print("Chunks más relevantes (después de rerank):\n")
-
-    for i, r in enumerate(resultados_finales):
-        print(f"--- Resultado {i+1} (relevancia: {r['score_relevancia']:.4f}) ---")
-        print(f"Archivo: {r['metadata']['archivo']} ({r['metadata']['ubicacion']})")
-        print(f"Texto: {r['texto'][:200]}...")
-        print()

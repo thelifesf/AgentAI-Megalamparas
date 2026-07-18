@@ -124,16 +124,3 @@ def leer_todos_los_documentos(carpeta_raiz):
         print()
 
     return documentos_texto, documentos_tabla
-
-
-# --- Prueba ---
-if __name__ == "__main__":
-    textos, tablas = leer_todos_los_documentos("Politicas-Negocio")
-
-    print(f"Documentos de TEXTO (PDF/Word): {len(textos)}")
-    for doc in textos:
-        print(f"  - {doc['archivo']} ({doc['tipo']}) — {len(doc['unidades'])} unidades (páginas/secciones)")
-
-    print(f"\nDocumentos de TABLA (Excel): {len(tablas)}")
-    for doc in tablas:
-        print(f"  - {doc['archivo']} ({doc['tipo']})")
