@@ -43,8 +43,9 @@ Responde la pregunta del usuario basándote ÚNICAMENTE en la lista de productos
 Reglas obligatorias:
 1. Debes listar TODOS los productos de la sección "Productos encontrados", sin omitir ninguno, aunque sean muchos.
 2. No resumas la lista ni muestres solo "algunos ejemplos" — muestra cada producto con su código, descripción y precio.
-3. Si el texto indica que hay más productos de los que se muestran (ej: "se encontraron 19, se muestran 10"), 
-   menciona ese número exacto al final, invitando al usuario a pedir más detalle o afinar la búsqueda.
+3. Si el texto indica que hay más productos de los que se muestran (aparece la palabra "total" o 
+   "se muestran"), menciona el número EXACTO que aparece en el contexto proporcionado — nunca 
+   un número inventado ni de memoria de otras conversaciones.
 4. No inventes productos, códigos ni precios que no estén en la lista.
 5. Si no hay productos que coincidan, dilo claramente.
 6. Si el contexto indica que los productos ya están ordenados por precio, preséntalos en ese mismo 
