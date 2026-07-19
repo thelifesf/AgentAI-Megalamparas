@@ -10,7 +10,8 @@ api_key = os.getenv("COHERE_API_KEY")
 co = cohere.ClientV2(api_key)
 
 # --- Conectar a la base de datos vectorial ya guardada ---
-cliente = chromadb.PersistentClient(path="chroma_db")
+RUTA_CHROMA = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "chroma_db")
+cliente = chromadb.PersistentClient(path=RUTA_CHROMA)
 coleccion = cliente.get_or_create_collection(
     name="megalamparas_documentos",
     metadata={"hnsw:space": "cosine"}
@@ -22,7 +23,7 @@ def embeber_pregunta(pregunta):
     respuesta = co.embed(
         texts=[pregunta],
         model="embed-multilingual-v3.0",
-        input_type="search_query",   # <-- distinto a "search_document": esto es una consulta
+        input_type="search_query",
         embedding_types=["float"]
     )
     return respuesta.embeddings.float[0]
@@ -38,6 +39,7 @@ def buscar_chunks_relevantes(pregunta, n_resultados=3):
     )
 
     return resultados
+
 
 # --- Reordenar los resultados usando Cohere Rerank para mayor precisión ---
 def rerankear_resultados(pregunta, resultados):

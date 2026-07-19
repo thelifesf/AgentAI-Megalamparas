@@ -2,8 +2,39 @@ import streamlit as st
 import sys
 import os
 from datetime import datetime
+import re
+
+def escapar_asteriscos_sueltos(texto):
+    # Escapa un "*" individual (no seguido/precedido de otro "*"),
+    # para que Markdown no lo interprete como cursiva y se muestre tal cual.
+    # Los "**" dobles (negritas reales) se dejan intactos.
+    return re.sub(r'(?<!\*)\*(?!\*)', r'\\*', texto)
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
+
+# --- Generar la base vectorial automáticamente si está vacía ---
+RUTA_CHROMA = os.path.join(os.path.dirname(__file__), "chroma_db")
+
+import chromadb
+_cliente_check = chromadb.PersistentClient(path=RUTA_CHROMA)
+_coleccion_check = _cliente_check.get_or_create_collection(
+    name="megalamparas_documentos",
+    metadata={"hnsw:space": "cosine"}
+)
+
+if _coleccion_check.count() == 0:
+    with st.spinner("Preparando el agente por primera vez, esto puede tardar un par de minutos..."):
+        from leer_documento import leer_todos_los_documentos
+        from procesar_texto import crear_chunks
+        from generar_embeddings import generar_embeddings
+        from guardar_vectores import guardar_en_chroma
+
+        _ruta_politicas = os.path.join(os.path.dirname(__file__), "Politicas-Negocio")
+        textos, _tablas = leer_todos_los_documentos(_ruta_politicas)
+        chunks = crear_chunks(textos)
+        chunks_con_embeddings = generar_embeddings(chunks)
+        guardar_en_chroma(chunks_con_embeddings)
+
 from router import responder
 
 st.set_page_config(
@@ -11,6 +42,8 @@ st.set_page_config(
     page_icon="💡",
     layout="wide"
 )
+
+st.info("🤖 Estás conversando con un agente de inteligencia artificial, no con una persona. Las respuestas se basan en los documentos internos de la empresa.")
 
 # --- Ícono de lámpara en SVG, elegante y sin depender de archivos externos ---
 ICONO_LAMPARA = """
@@ -53,6 +86,23 @@ st.markdown("""
     .stChatInput textarea {
         background-color: #201d17 !important;
         color: #f2e3c6 !important;
+    }
+    .stChatInput textarea:focus {
+        outline: none !important;
+        box-shadow: 0 0 0 1px #3a3226 !important;
+        border-color: #3a3226 !important;
+    }
+    [data-testid="stChatInput"] {
+        background-color: #14120f !important;
+    }
+    [data-testid="stBottomBlockContainer"] {
+        background-color: #14120f !important;
+    }
+    [data-testid="stChatInputContainer"] {
+        background-color: #14120f !important;
+    }
+    footer {
+        visibility: hidden;
     }
     div[data-testid="stMarkdownContainer"] p {
         color: #e8ddc7;
@@ -136,6 +186,6 @@ if pregunta:
         with st.spinner("Buscando información..."):
             respuesta, categoria = responder(pregunta)
         st.markdown(f'<span class="badge-categoria">{categoria}</span>', unsafe_allow_html=True)
-        st.write(respuesta)
-
+        st.write(escapar_asteriscos_sueltos(respuesta))
+        feedback = st.feedback("thumbs", key=f"feedback_{len(st.session_state.historial)}")
     st.session_state.historial.append({"rol": "assistant", "contenido": respuesta, "categoria": categoria})
