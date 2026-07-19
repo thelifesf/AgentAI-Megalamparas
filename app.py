@@ -16,11 +16,16 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 RUTA_CHROMA = os.path.join(os.path.dirname(__file__), "chroma_db")
 
 import chromadb
-_cliente_check = chromadb.PersistentClient(path=RUTA_CHROMA)
-_coleccion_check = _cliente_check.get_or_create_collection(
-    name="megalamparas_documentos",
-    metadata={"hnsw:space": "cosine"}
-)
+@st.cache_resource
+def obtener_cliente_chroma():
+    cliente = chromadb.PersistentClient(path=RUTA_CHROMA)
+    coleccion = cliente.get_or_create_collection(
+        name="megalamparas_documentos",
+        metadata={"hnsw:space": "cosine"}
+    )
+    return coleccion
+
+_coleccion_check = obtener_cliente_chroma()
 
 if _coleccion_check.count() == 0:
     with st.spinner("Preparando el agente por primera vez, esto puede tardar un par de minutos..."):
